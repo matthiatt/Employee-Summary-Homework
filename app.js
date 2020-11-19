@@ -26,6 +26,10 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 //   managerDetails();
 //   internDetails();
 // }
+function quizContents() {
+  questions();
+}
+quizContents();
 
 function questions() {
   inquirer
@@ -205,13 +209,19 @@ function questions() {
       })
       .then(function ({ createMembers }) {
         if (createMembers) {
-          questions();
         }
+        if (!fs.existsSync(OUTPUT_DIR)) {
+          fs.mkdirSync(OUTPUT_DIR);
+        }
+        fs.writeFile(outputPath, render(teamMembers), "utf8");
+      })
+      .catch((err) => {
+        throw err;
       });
   }
-  addEmployee();
+  // addEmployee();
 }
-questions();
+quizContents();
 
 // function employeeDetails() {
 //     inquirer.prompt(
