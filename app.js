@@ -1,7 +1,7 @@
 // Files required
-const Manager = require("./lib/Manager");
-const Engineer = require("./lib/Engineer");
-const Intern = require("./lib/Intern");
+const Manager = require("./lib/manager");
+const Engineer = require("./lib/engineer");
+const Intern = require("./lib/intern");
 const Employee = require("./lib/employee");
 const render = require("./lib/htmlRenderer");
 
@@ -29,7 +29,6 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 function quizContents() {
   questions();
 }
-quizContents();
 
 function questions() {
   inquirer
@@ -38,7 +37,7 @@ function questions() {
         type: "list",
         name: "choice",
         message: "What type of team-member would you like to add?",
-        choices: ["Engineer", "Intern", "Managment", "Exit"],
+        choices: ["Engineer", "Intern", "Manager", "Exit"],
       },
     ])
     .then((user) => {
@@ -49,7 +48,7 @@ function questions() {
         case "Intern":
           internDetails();
           break;
-        case "Managment":
+        case "Manager":
           managerDetails();
           break;
         default:
@@ -94,7 +93,7 @@ function questions() {
         {
           type: "input",
           name: "name",
-          message: "What is the manager's name?",
+          message: "What is your name?",
         },
         {
           type: "input",
@@ -109,9 +108,10 @@ function questions() {
       ])
       .then((managmentResponse) => {
         var nxtManager = new Manager(
-          managmentResponse.email,
           managmentResponse.name,
-          managmentResponse.officeNumber
+          primaryKey,
+          managmentResponse.email,
+          managmentResponse.room
         );
         primaryKey++;
         teamMembers.push(nxtManager);
@@ -136,7 +136,7 @@ function questions() {
       .prompt([
         {
           type: "input",
-          message: "What is your name?",
+          message: "What is your manager's name?",
           name: "name",
         },
         {
@@ -152,10 +152,10 @@ function questions() {
       ])
       .then((internResponse) => {
         var nxtIntern = new Intern(
-          primaryKey,
-          internResponse.email,
           internResponse.name,
-          internResponse.college
+          internResponse.college,
+          internResponse.email,
+          primaryKey++
         );
         primaryKey++;
         teamMembers.push(nxtIntern);
@@ -173,7 +173,7 @@ function questions() {
       .prompt([
         {
           type: "input",
-          message: "What is the manager's name?",
+          message: "What is your name?",
           name: "name",
         },
         {
@@ -189,14 +189,16 @@ function questions() {
       ])
       .then((engrRes) => {
         var nxtEngineer = new Engineer(
-          engrRes.email,
           engrRes.name,
-          engrRes.github
+          engrRes.github,
+          engrRes.email,
+          primaryKey++
         );
         primaryKey++;
         teamMembers.push(nxtEngineer);
         questions();
       });
+
     // allTeamMmbers();
   }
 
@@ -205,7 +207,9 @@ function questions() {
       fs.mkdirSync(OUTPUT_DIR);
     }
     fs.writeFileSync(outputPath, render(teamMembers), "utf8");
+    console.log(teamMembers);
   }
+
   // function teamBuild() {
   //   inquirer
   //     .prompt({
@@ -220,9 +224,9 @@ function questions() {
   //       }
   //       fs.writeFile(outputPath, render(teamMembers), "utf8");
   //     })
-  //     .catch((err) => {
-  //       throw err;
-  //     });
+  // .catch((err) => {
+  //   throw err;
+  // });
   // }
   // addEmployee();
 }
