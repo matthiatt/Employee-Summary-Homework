@@ -200,25 +200,30 @@ function questions() {
     // allTeamMmbers();
   }
 
-  function addEmployee() {
-    inquirer
-      .prompt({
-        message: "do you wish to add Employees and/or users?",
-        type: "confirm",
-        name: "createMembers",
-      })
-      .then(function ({ createMembers }) {
-        if (createMembers) {
-        }
-        if (!fs.existsSync(OUTPUT_DIR)) {
-          fs.mkdirSync(OUTPUT_DIR);
-        }
-        fs.writeFile(outputPath, render(teamMembers), "utf8");
-      })
-      .catch((err) => {
-        throw err;
-      });
+  function teamBuild() {
+    if (!fs.existsSync(OUTPUT_DIR)) {
+      fs.mkdirSync(OUTPUT_DIR);
+    }
+    fs.writeFileSync(outputPath, render(teamMembers), "utf8");
   }
+  // function teamBuild() {
+  //   inquirer
+  //     .prompt({
+  //       message: "do you wish to add Employees and/or users?",
+  //       type: "confirm",
+  //       name: "createMembers",
+  //     })
+  //     .then(function ({ createMembers }) {
+  //       if (createMembers) {
+  //       } else if (!fs.existsSync(OUTPUT_DIR)) {
+  //         fs.mkdirSync(OUTPUT_DIR);
+  //       }
+  //       fs.writeFile(outputPath, render(teamMembers), "utf8");
+  //     })
+  //     .catch((err) => {
+  //       throw err;
+  //     });
+  // }
   // addEmployee();
 }
 quizContents();
