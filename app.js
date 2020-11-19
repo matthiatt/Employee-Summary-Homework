@@ -1,16 +1,21 @@
+// Files required
 const Manager = require("./lib/Manager");
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
-const inquirer = require("inquirer");
-const path = require("path");
-const fs = require("fs");
-
-var teamMembers = [];
-const OUTPUT_DIR = path.resolve(__dirname, "output");
-const outputPath = path.join(OUTPUT_DIR, "team.html");
-
-const render = require("./lib/htmlRenderer");
 const Employee = require("./lib/employee");
+const render = require("./lib/htmlRenderer");
+
+// Modules required
+const inquirer = require("inquirer");
+const jest = require("jest");
+const path = require("path");
+
+// Global Variables
+let primaryKey = 0;
+var teamMembers = [];
+
+// const OUTPUT_DIR = path.resolve(__dirname, "output");
+// const outputPath = path.join(OUTPUT_DIR, "team.html");
 // const { rejects } = require("assert");
 // const { resolve } = require("path");
 // const { createPromptModule } = require("inquirer");
@@ -21,56 +26,112 @@ const Employee = require("./lib/employee");
 // }
 
 function questions() {
-  function managerDetails() {
-    console.log("ndjwsndjsnfjkf");
+  function allTeamMmbers() {
     inquirer
       .prompt([
         {
-          type: "input",
-          name: "name",
-          message: "What is the manager's name?",
-
-          validate: function name(answer) {
-            if (name === answer) {
-              return false;
-            }
-            return "Please enter in a valid answer to the question.";
-          },
-        },
-        {
-          type: "input",
-          name: "room",
-          message: "What is the office number?",
-
-          validate: function room(answer) {
-            if (room === answer) {
-              return false;
-            }
-            return "Please enter in a valid answer to the question.";
-          },
-        },
-        {
-          type: "input",
-          name: "email",
-          message: "What is your e-mail?",
-
-          validate: function email(answer) {
-            if (email === answer) {
-              return false;
-            }
-            return "Please enter in a valid answer to the question.";
-          },
+          type: "list",
+          name: "choice",
+          message: "What type of team-member would you like to add?",
+          choices: ["Engineer", "Intern", "Managment", "Exit"],
         },
       ])
-      .then((answer) => {
-        var manager = new Manager(
-          answer.managerName,
-          answer.managerId,
-          answer.email,
-          answer.officeNumber,
-          teamMembers.push(manager)
+      .then((user) => {
+        switch (user.choice) {
+          case "Engineer":
+            engineerDetails();
+            break;
+          case "Intern":
+            internDetails();
+            break;
+          case "Managment":
+            managerDetails();
+            break;
+          default:
+            teamBuild(); // Need to create this method.
+            break;
+        }
+      })
+      .then((engrRes) => {
+        var nxtEngineer = new Engineer(
+          engrRes.email,
+          engrRes.name,
+          engrRes.github
         );
+        primaryKey++;
+        teamMembers.push(nxtEngineer);
+      })
+      .then((internResponse) => {
+        var nxtIntern = new Intern(
+          primaryKey,
+          internResponse.email,
+          internResponse.name,
+          internResponse.college
+        );
+        primaryKey++;
+        teamMembers.push(nxtIntern);
+      })
+      .then((managmentResponse) => {
+        var nxtManager = new Manager(
+          managmentResponse.email,
+          managmentResponse.name,
+          managmentResponse.officeNumber
+        );
+        primaryKey++;
+        teamMembers.push(nxtManager);
       });
+    teamBuild();
+  }
+
+  function managerDetails() {
+    console.log("ndjwsndjsnfjkf");
+    inquirer.prompt([
+      {
+        type: "input",
+        name: "name",
+        message: "What is the manager's name?",
+
+        validate: function name(answer) {
+          if (name === answer) {
+            return false;
+          }
+          return "Please enter in a valid answer to the question.";
+        },
+      },
+      {
+        type: "input",
+        name: "room",
+        message: "What is the office number?",
+
+        validate: function room(answer) {
+          if (room === answer) {
+            return false;
+          }
+          return "Please enter in a valid answer to the question.";
+        },
+      },
+      {
+        type: "input",
+        name: "email",
+        message: "What is your e-mail?",
+
+        validate: function email(answer) {
+          if (email === answer) {
+            return false;
+          }
+          return "Please enter in a valid answer to the question.";
+        },
+      },
+    ]);
+    // .then((answer) => {
+    //   var manager = new Manager(
+    //     answer.managerName,
+    //     answer.managerId,
+    //     answer.email,
+    //     answer.officeNumber,
+    //     teamMembers.push(manager)
+    //   );
+    // });
     allTeamMmbers();
   }
   //   managerDetails();
@@ -116,31 +177,7 @@ function questions() {
   allTeamMmbers();
 
   questions();
-  function allTeamMmbers() {
-    inquirer
-      .prompt([
-        {
-          type: "list",
-          name: "choice",
-          message: "What type of team-member would you like to add?",
-          choices: ["engineer", "intern", "no-more"],
-        },
-      ])
-      .then((user) => {
-        switch (user.choice) {
-          case "engineer":
-            engineerDetails();
-            break;
-          case "intern":
-            internDetails();
-            break;
-          default:
-            teamBuild(); // Need to create this method.
-            break;
-        }
-      });
-    teamBuild();
-  }
+
   managerDetails();
 
   function engineerDetails() {
