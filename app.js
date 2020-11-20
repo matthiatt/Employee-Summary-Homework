@@ -52,7 +52,7 @@ function questions() {
           managerDetails();
           break;
         default:
-          teamBuild(); // Need to create this method.
+          teamBuild();
           break;
       }
     });
@@ -206,6 +206,7 @@ function questions() {
     if (!fs.existsSync(OUTPUT_DIR)) {
       fs.mkdirSync(OUTPUT_DIR);
     }
+    console.log(teamMembers);
     fs.writeFileSync(outputPath, render(teamMembers), "utf8");
     console.log(teamMembers);
   }
